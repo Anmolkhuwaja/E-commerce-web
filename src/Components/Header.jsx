@@ -16,7 +16,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import DrawerApp from "./DrawerApp";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -185,7 +185,7 @@ export default function Header() {
             className="ps-4 ms-5 text-black fw-medium"
             sx={{ display: { xs: "none", sm: "block" }, }}
           >
-            MOBEL
+              <Link to="/" className="text-decoration-none text-black">MOBEL</Link>
           </Typography>
           {/* <Search>
             <SearchIconWrapper>

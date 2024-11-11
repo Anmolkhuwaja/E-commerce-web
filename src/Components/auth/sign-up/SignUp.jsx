@@ -12,19 +12,39 @@ import React, { useState } from "react";
 import SignUpImg from "../assets/signup.jpg";
 import Visibility from "@mui/icons-material/Visibility";
 // import OutlinedInput from '@mui/material/OutlinedInput';
+import { yupResolver } from "@hookform/resolvers/yup"
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup"
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const { control, handleSubmit } = useForm({
-    defaultValues: {
+  const schema = yup.object({
+    name: yup.string().min(5).max(10).required("Your name is required"),
+    email: yup.string().required("Your email is required"),
+    password: yup.string().required("Your password is required").min(8, 'Password must be 8 characters long')
+    .matches(/[0-9]/, 'Password requires a number')
+    .matches(/[a-z]/, 'Password requires a lowercase letter')
+    .matches(/[A-Z]/, 'Password requires an uppercase letter')
+    .matches(/[^\w]/, 'Password requires a symbol'),
+  });
+
+  const signUpValues = {
       name: "",
       email: "",
       password: "",
-    },
-  });
+  }
+
+  const { control, handleSubmit, reset, formState: { errors } } = useForm({
+    defaultValues: signUpValues,
+    resolver: yupResolver(schema)
+  });  
+
+  const signUpHandler = (dummy) =>{
+    console.log(dummy);
+    reset();
+  };
 
   return (
     <>
@@ -34,7 +54,7 @@ const SignUp = () => {
           xs={12}
           sm={12}
           md={6}
-          className="text-center align-items-center"
+          className=""
         >
           <img className="img-fluid w-75 mt-lg-5" src={SignUpImg} />
         </Grid>
@@ -43,16 +63,14 @@ const SignUp = () => {
           xs={12}
           sm={12}
           md={6}
-          className="text-center align-items-center"
+          className=""
         >
           <Box>
             <Typography variant="h4">Sign Up</Typography>
             <Typography variant="h6">Create your account!</Typography>
 
             <form
-              onSubmit={handleSubmit((dummy) => {
-                console.log(dummy);
-              })}
+              onSubmit={handleSubmit(signUpHandler)}
             >
               <Grid container>
                 {/* Container mn spacing={2} hum space deny kay liye dety hen.*/}
@@ -67,6 +85,8 @@ const SignUp = () => {
                     placeholder="Name"
                   />}
                   />
+
+                  <Typography variant="body2" className="text-danger">{errors?.name?.message}</Typography>
                 </Grid>
                 <Grid item xs={12}>
                 <Controller
@@ -79,6 +99,8 @@ const SignUp = () => {
                     placeholder="Email"
                   />}
                   />
+
+                <Typography variant="body2" className="text-danger">{errors?.email?.message}</Typography>
                 </Grid>
                 <Grid item xs={12}>
                 <Controller
@@ -114,6 +136,7 @@ const SignUp = () => {
                     }}
                   />}
                   />
+                   <Typography variant="body2" className="text-danger">{errors?.password?.message}</Typography>
                 </Grid>
               </Grid>
               <Button

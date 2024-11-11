@@ -6,7 +6,7 @@ import Products from "./Components/Products";
 function App() {
   return (
     <>
-     <Header/>
+     
      <Products/>
     </>
   );
