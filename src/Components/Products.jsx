@@ -2,14 +2,21 @@ import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 // import imageOne from "../images/01.jpg";
 // import imageTwo from "../images/02.jpg";
 // import imageThree from "../images/03.jpg";
 // import imageFour from "../images/04.jpg";
-import { Alert, Box, CircularProgress, Grid, IconButton, Snackbar, TextField, Tooltip } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  CircularProgress,
+  Grid,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 // import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -47,10 +54,13 @@ const Products = () => {
   // const [openSuccess, setOpenSuccess] = useState(false);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [allProducts, setAllProducts] = useState([]);
   const navigate = useNavigate();
+  const [categoryOptions, setCategoryOptions] = useState([]);
+  const [categoryFilter, setCategoryFilter] = useState({});
 
   console.log(isLoading, "isLoading");
-  
+
   // const [filteredProducts, setFilteredProducts] = useState(dummyProducts);
 
   // useEffect(() => {
@@ -103,33 +113,64 @@ const Products = () => {
   //   </React.Fragment>
   // );
 
-  useEffect (() =>{
-    const fetchProducts = async () =>{
+  useEffect(() => {
+    const fetchProducts = async () => {
       try {
         setIsLoading(true);
         const products = await axios.get("https://fakestoreapi.com/products");
-       
-        if(products.status === 200){
+
+        if (products.status === 200) {
           setIsLoading(false);
           setProducts(products?.data);
-        }else{
+          setAllProducts(products?.data);
+
+          const filterCategories = products?.data?.map((product) => {
+            return {
+              label: product?.category?.charAt(0).toUpperCase() + product.category.slice(1),
+              value: product?.category,
+            };
+          });
+
+          const uniqueCategories = filterCategories.filter(
+            (item, index, self) =>
+              index === self.findIndex((t) => t.value === item.value)
+          );
+
+          setCategoryOptions(uniqueCategories);
+        } else {
           setIsLoading(true);
         }
-
       } catch (err) {
         console.log(err);
-        
       }
-    }
-
+    };
     fetchProducts();
-  },[]);
+  }, []);
+
+  useEffect(() => {});
+
+  useEffect(() =>{
+    let filterProducts = allProducts?.filter((product)=> product?.category === categoryFilter?.value);
+
+    setProducts(filterProducts);
+    console.log(filterProducts, 'filterProducts');
+    
+  }, [categoryFilter]);
 
   return (
     <>
-      {/* <Box className="container mt-5">
-        <TextField onChange={searchHandler} size="small" placeholder="Search" />
-      </Box> */}
+      <Box className="container mt-5 d-flex justify-content-between">
+        <TextField onChange={[]} size="small" placeholder="Search" />
+        <Autocomplete
+          disablePortal
+          size="small"
+          options={categoryOptions}
+          onChange={(e, newValue)=>{setCategoryFilter(newValue);
+          }}
+          sx={{ width: 200 }}
+          renderInput={(params) => <TextField {...params} label="Categories" />}
+        />
+      </Box>
 
       {/* <Snackbar
         open={openAlert}
@@ -187,72 +228,93 @@ const Products = () => {
         )}
       </Box> */}
 
-     { isLoading ? (
-      <Box className="text-center mt-5 justify-content-center d-flex"><CircularProgress color="inherit" /></Box>
-     ) : (<Grid container className="d-flex p-5  justify-content-center align-items-center">
-        {products?.map((product, index) => {
-          return (
-            <Grid item sx={12} sm={5} md={3} className="mt-4 container" key={index}>
-            <Card className="text-center" sx={{ maxWidth: 260, cursor: "pointer" }} key={index}>
-              <img
-              style={{maxHeight: "120px", minHeight: "140px"}}
-                src={product.image}
-                className="img-fluid pt-4"
-                alt={"${product.name}"}
-              />
-              <Tooltip title={product?.title} placement="top">
-              <Typography
-                gutterBottom
-                variant="body1"
-                className="pt-3 ps-2"
-                component="div"
+      {isLoading ? (
+        <Box className="text-center mt-5 justify-content-center d-flex">
+          <CircularProgress color="inherit" />
+        </Box>
+      ) : (
+        <Grid
+          container
+          className="d-flex p-5  justify-content-center align-items-center"
+        >
+          {products?.map((product, index) => {
+            return (
+              <Grid
+                item
+                sx={12}
+                sm={5}
+                md={3}
+                className="mt-4 container"
+                key={index}
               >
-                {product.title?.length >= 22 ? 
-                `${product?.title.slice(0, 26)}...` : product?.title}
-              </Typography>
-              </Tooltip>
-              <Typography
-                variant="body2"
-                className="ps-2"
-                sx={{ color: "text.secondary" }}
-              >
-                {product.desc}
-              </Typography>
-              <Box className="d-flex my-3 justify-content-between px-2 align-content-center">
-              <Button
-                  size="small"
-                  className="px-4 fw-bold text-white bg-black"
+                <Card
+                  className="text-center"
+                  sx={{ maxWidth: 260, cursor: "pointer" }}
+                  key={index}
                 >
-                 <Tooltip title="favorite" placement="top">
-                 <FavoriteBorderIcon />
-                 </Tooltip>
-                </Button>
-                <Tooltip title="Details" placement="top">
-                <Button
-                  size="small"
-                  sx={{ backgroundColor: "#ffde21" }}
-                  className="py-0 px-3 fw-bold text-black"
-                >
-                 <VisibilityIcon onClick={()=>
-                   {navigate(`/product-details/${product?.id}`);
-                    console.log(product);
-                   }} />
-                </Button>
-                </Tooltip>
-                <Button
-                  size="small"
-                  className="px-4 fw-bold text-white bg-black"
-                >
-                  <Tooltip title="Add to cart" placement="top">
-                  <ShoppingCartIcon />
+                  <img
+                    style={{ maxHeight: "120px", minHeight: "140px" }}
+                    src={product.image}
+                    className="img-fluid pt-4"
+                    alt={"${product.name}"}
+                  />
+                  <Tooltip title={product?.title} placement="top">
+                    <Typography
+                      gutterBottom
+                      variant="body1"
+                      className="pt-3 ps-2"
+                      component="div"
+                    >
+                      {product.title?.length >= 22
+                        ? `${product?.title.slice(0, 26)}...`
+                        : product?.title}
+                    </Typography>
                   </Tooltip>
-                </Button>
-              </Box>
-            </Card>
-            </Grid>
-          );
-        })}
-      </Grid>)}
+                  <Typography
+                    variant="body2"
+                    className="ps-2"
+                    sx={{ color: "text.secondary" }}
+                  >
+                    {product.desc}
+                  </Typography>
+                  <Box className="d-flex my-3 justify-content-between px-2 align-content-center">
+                    <Button
+                      size="small"
+                      className="px-4 fw-bold text-white bg-black"
+                    >
+                      <Tooltip title="favorite" placement="top">
+                        <FavoriteBorderIcon />
+                      </Tooltip>
+                    </Button>
+                    <Tooltip title="Details" placement="top">
+                      <Button
+                        size="small"
+                        sx={{ backgroundColor: "#ffde21" }}
+                        className="py-0 px-3 fw-bold text-black"
+                      >
+                        <VisibilityIcon
+                          onClick={() => {
+                            navigate(`/product-details/${product?.id}`);
+                            console.log(product);
+                          }}
+                        />
+                      </Button>
+                    </Tooltip>
+                    <Button
+                      size="small"
+                      className="px-4 fw-bold text-white bg-black"
+                    >
+                      <Tooltip title="Add to cart" placement="top">
+                        <ShoppingCartIcon />
+                      </Tooltip>
+                    </Button>
+                  </Box>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+      )}
     </>
   );
 };

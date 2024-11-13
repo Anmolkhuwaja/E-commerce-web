@@ -42,6 +42,7 @@ const ProductDetails = () => {
 
   
   return (
+    
     <Box className='mt-4'>
  { isLoading ?  <Box className="text-center mt-5 justify-content-center d-flex"><CircularProgress color="inherit" /></Box> : <Grid container spacing={3} className='d-flex text-center align-items-center'>
     <Grid item sx={12} sm={12} md={6} className=''>
