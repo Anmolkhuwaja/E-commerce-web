@@ -20,6 +20,8 @@ import {
 // import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../Slices/addCart/addCartSlice";
 
 // const dummyProducts = [
 //   {
@@ -58,6 +60,9 @@ const Products = () => {
   const navigate = useNavigate();
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState({});
+
+const dispatch = useDispatch()
+
 
   console.log(isLoading, "isLoading");
 
@@ -305,7 +310,7 @@ const Products = () => {
                       className="px-4 fw-bold text-white bg-black"
                     >
                       <Tooltip title="Add to cart" placement="top">
-                        <ShoppingCartIcon />
+                        <ShoppingCartIcon onClick={()=>dispatch(addToCart())} />
                       </Tooltip>
                     </Button>
                   </Box>
