@@ -7,7 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useDispatch, useSelector } from "react-redux";
 import cart from "./auth/assets/cart.jpg"
-import { decreaseQuantity, increaseQuantity } from "../Slices/product/ProductSlice";
+import { decreaseQuantity, increaseQuantity, removeProduct } from "../Slices/product/ProductSlice";
 
 const DrawerApp = (props) => {
   const { open, toggleDrawer } = props;
@@ -61,12 +61,13 @@ const DrawerApp = (props) => {
   //   setCartItems(updatedItems);
   // };
 
-  return (
+  const totalPrice = items?.length && items?.reduce((sum, product) => sum + product?.price * product?.quantity, 0)  
 
+  return (
     <div>
       <Drawer open={open} onClose={toggleDrawer(false)}>
         <Box
-          sx={{ width: 460 }}
+          sx={{ width: 400 }}
           role="presentation"
         >
           <Typography variant="h4" className="ps-2 mt-3">Shopping cart</Typography>
@@ -119,12 +120,17 @@ const DrawerApp = (props) => {
                 </ButtonGroup>
 
                 {/* Delete Button */}
-                <IconButton color="" className="ms-2 text-black">
+                <IconButton color="" className="ms-2 text-black"  onClick={()=> dispatch(removeProduct(item))}>
                   <DeleteIcon />
                 </IconButton>
               </Box>
             </Box>
           ))}
+
+          <Box className="d-flex justify-content-between align-items-center px-3 mt-3">
+          <Typography className="fs-5 fw-bold">Subtotal:</Typography>
+          <Typography className="fs-5 fw-bold">$ {totalPrice}</Typography>
+          </Box>
         </Box>
       </Drawer>
     </div>
