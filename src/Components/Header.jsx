@@ -63,7 +63,7 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [cartItems ,setCartItems] = React.useState([]);
-  const count = useSelector((state) => state.counter)
+  const count = useSelector((state) => state.counter);
 
   console.log(count, 'count');
   
@@ -210,7 +210,7 @@ export default function Header() {
               aria-label="show 4 new mails"
               color="inherit"
             >
-              <Badge badgeContent={count.value} color="error">
+              <Badge badgeContent={count?.value} color="error">
                 <ShoppingCartIcon onClick={toggleDrawer(true)} className="text-black" />
               </Badge>
             </IconButton>

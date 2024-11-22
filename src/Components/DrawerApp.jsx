@@ -1,92 +1,127 @@
-import { Typography, IconButton, TextField } from '@mui/material';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import { useState, useEffect } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
+import { Typography, IconButton, TextField, ButtonGroup, Button } from "@mui/material";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+// import { useState, useEffect } from 'react';
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import { useDispatch, useSelector } from "react-redux";
+import cart from "./auth/assets/cart.jpg"
+import { decreaseQuantity, increaseQuantity } from "../Slices/product/ProductSlice";
 
 const DrawerApp = (props) => {
   const { open, toggleDrawer } = props;
-  const [cartItems, setCartItems] = useState([]);
 
-  useEffect(() => {
-    const cartItemArr = localStorage.getItem("cartList");
-    const parseCartItemsArr = JSON.parse(cartItemArr) || [];
-    
-    // Group items and count the quantity
-    const itemCounts = parseCartItemsArr.reduce((acc, item) => {
-      if (acc[item.id]) {
-        acc[item.id].quantity += 1;
-      } else {
-        acc[item.id] = { ...item, quantity: 1 };
-      }
-      return acc;
-    }, {});
+  const { items } = useSelector((state) => state.products);
 
-    setCartItems(Object.values(itemCounts));
-  }, []);
+  const dispatch = useDispatch()
+
+  // const [cartItems, setCartItems] = useState([]);
+
+  // useEffect(() => {
+  // const cartItemArr = localStorage.getItem("cartList");
+  // const parseCartItemsArr = JSON.parse(cartItemArr) || [];
+
+  // Group items and count the quantity
+  //   const itemCounts = parseCartItemsArr.reduce((acc, item) => {
+  //     if (acc[item.id]) {
+  //       acc[item.id].quantity += 1;
+  //     } else {
+  //       acc[item.id] = { ...item, quantity: 1 };
+  //     }
+  //     return acc;
+  //   }, {});
+
+  //   setCartItems(Object.values(itemCounts));
+  // }, []);
 
   // Handle quantity increase
-  const handleIncrease = (id) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
-  };
+  // const handleIncrease = (id) => {
+  //   setCartItems((prevItems) =>
+  //     prevItems.map((item) =>
+  //       item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+  //     )
+  //   );
+  // };
 
   // Handle quantity decrease
-  const handleDecrease = (id) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-    );
-  };
+  // const handleDecrease = (id) => {
+  //   setCartItems((prevItems) =>
+  //     prevItems.map((item) =>
+  //       item.id === id && item.quantity > 1
+  //         ? { ...item, quantity: item.quantity - 1 }
+  //         : item
+  //     )
+  //   );
+  // };
 
   // Handle delete item
-  const handleDelete = (id) => {
-    const updatedItems = cartItems.filter((item) => item.id !== id);
-    setCartItems(updatedItems);
-  };
+  // const handleDelete = (id) => {
+  //   const updatedItems = cartItems.filter((item) => item.id !== id);
+  //   setCartItems(updatedItems);
+  // };
 
   return (
+
     <div>
       <Drawer open={open} onClose={toggleDrawer(false)}>
-        <Box sx={{ width: 270 }} role="presentation" onClick={toggleDrawer(false)}>
-          <Typography variant="h5">Cart Items</Typography>
-          {cartItems.map((item) => (
-            <Box key={item.id} className="border border-black mt-2 mx-2 p-1">
-              <img className="pt-2" width="80px" src={item.img} alt={item.name} />
-              <Typography variant="body1">{item.name}</Typography>
-              
-              <Box display="d-flex" alignItems="center" mt={1}>
-                {/* Decrease Button */}
-                <IconButton onClick={() => handleDecrease(item.id)}>
-                  <RemoveIcon />
-                </IconButton>
+        <Box
+          sx={{ width: 460 }}
+          role="presentation"
+        >
+          <Typography variant="h4" className="ps-2 mt-3">Shopping cart</Typography>
+          {items.length === 0 ? 
+          <Box height={'80vh'} className="text-center justify-content-center d-flex align-items-center flex-column">
+              <img src={cart} alt="cart" className="w-25" />
+              <Typography className="fs-3">YOUR CART IS EMPTY.</Typography>
+              <Typography variant="body1" className="px-2">Before proceed to checkout you must add some products to your shopping cart. You will find a lot of interesting products on our "Shop" page.</Typography> <br/>
+              <Button className="bg-black text-white fw-medium px-3 rounded-pill" onClick={toggleDrawer(false)}>RETURN TO SHOP</Button>
+          </Box> : items.map((item) => (
+            <Box
+              key={item.id}
+              className="border d-flex align-items-center justify-content-center border-black mt-2 mx-2 p-1"
+            >
+              <img
+                className="pt-2"
+                width="50px"
+                src={item?.image}
+                alt={item.image}
+              />
 
-                {/* Quantity Input Field */}
-                <TextField
-                  variant="outlined"
+              <Box>
+                <Typography variant="body1" className="ms-2">
+                  {item.title?.length >= 22
+                    ? `${item?.title.slice(0, 15)}...`
+                    : item?.title}
+                </Typography>
+                <Typography className="ms-2">{item.price}</Typography>
+              </Box>
+
+              <Box className="d-flex align-items-center" alignItems="center" mt={1}>
+                <ButtonGroup
+                  variant="contained"
+                  className="ms-4"
+                  aria-label="Basic button group"
                   size="small"
-                  value={item.quantity}
-                  inputProps={{ readOnly: true, style: { textAlign: "center" } }}
-                  sx={{ width: "50px", mx: 1 }}
-                />
+                 sx={{ backgroundColor: "#ffde21" }}
+                >
+                  <Button className="bg-warnin text-black"
+                 sx={{ backgroundColor: "#ffde21" }}
+                  size="small"><RemoveIcon onClick={()=> dispatch(decreaseQuantity(item))} /></Button>
+ 
+                  <Button className="bg-warnin text-black"
+                 sx={{ backgroundColor: "#ffde21" }}
+                  size="small">{item?.quantity}</Button>
 
-                {/* Increase Button */}
-                <IconButton onClick={() => handleIncrease(item.id)}>
-                  <AddIcon />
-                </IconButton>
+                  <Button className="bg-warnin text-black"
+                 sx={{ backgroundColor: "#ffde21" }}
+                  size="small"><AddIcon onClick={()=> dispatch(increaseQuantity(item))} /></Button>
+                </ButtonGroup>
 
                 {/* Delete Button */}
-              <IconButton color="black" className='ms-5' onClick={() => handleDelete(item.id)}>
-                <DeleteIcon />
-              </IconButton>
+                <IconButton color="" className="ms-2 text-black">
+                  <DeleteIcon />
+                </IconButton>
               </Box>
             </Box>
           ))}

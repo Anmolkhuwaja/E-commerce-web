@@ -5,10 +5,6 @@ import Button from "@mui/material/Button";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-// import imageOne from "../images/01.jpg";
-// import imageTwo from "../images/02.jpg";
-// import imageThree from "../images/03.jpg";
-// import imageFour from "../images/04.jpg";
 import {
   Autocomplete,
   Box,
@@ -21,39 +17,11 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../Slices/addCart/addCartSlice";
-
-// const dummyProducts = [
-//   {
-//     id: 1,
-//     img: imageOne,
-//     name: "Elegance Living 1",
-//     desc: "Discover Elegance Living, where modern furniture meets timeless comfort. Our curated pieces combine style and functionality.",
-//   },
-//   {
-//     id: 2,
-//     img: imageTwo,
-//     name: "Elegance Living 2",
-//     desc: "Discover Elegance Living, where modern furniture meets timeless comfort. Our curated pieces combine style and functionality.",
-//   },
-//   {
-//     id: 3,
-//     img: imageThree,
-//     name: "Elegance Living 3",
-//     desc: "Discover Elegance Living, where modern furniture meets timeless comfort. Our curated pieces combine style and functionality.",
-//   },
-//   {
-//     id: 4,
-//     img: imageFour,
-//     name: "Elegance Living 4",
-//     desc: "Discover Elegance Living, where modern furniture meets timeless comfort. Our curated pieces combine style and functionality.",
-//   },
-// ];
+// import { addToCart } from "../Slices/addCart/addCartSlice";
+import { addProduct, addProducts } from "../Slices/product/ProductSlice";
+import { ToastContainer, toast } from 'react-toastify';
 
 const Products = () => {
-  // const [cartList, setCartList] = useState([]);
-  // const [openAlert, setOpenAlert] = useState(false);
-  // const [openSuccess, setOpenSuccess] = useState(false);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [allProducts, setAllProducts] = useState([]);
@@ -62,61 +30,6 @@ const Products = () => {
   const [categoryFilter, setCategoryFilter] = useState({});
 
 const dispatch = useDispatch()
-
-
-  console.log(isLoading, "isLoading");
-
-  // const [filteredProducts, setFilteredProducts] = useState(dummyProducts);
-
-  // useEffect(() => {
-  //   setFilteredProducts(products);
-  // }, [products]);
-
-  // const cartHandler = (product) => {
-  //   const isExist = cartList.find((cart) => cart.id === product.id);
-
-  //   if (!isExist) {
-  //     setCartList((prev) => {
-  //       const newCartList = [...prev, product];
-  //       localStorage.setItem("cartList", JSON.stringify(newCartList));
-  //       return newCartList;
-  //     });
-  //     setOpenSuccess(true);
-  //   } else {
-  //     setOpenAlert(true);
-  //   }
-  // };
-
-  // const searchHandler = (e) => {
-  //   const searchQuery = e.target.value.toLowerCase();
-  //   const filtered = products.filter((product) =>
-  //     product.name.toLowerCase().includes(searchQuery)
-  //   );
-  //   setFilteredProducts(filtered);
-  //   console.log(filtered, "Filtered Products");
-  // };
-
-  // const closeHandler = (reason) => {
-  //   if (reason === "clickaway") {
-  //     return;
-  //   }
-  //   setOpenAlert(false);
-  // };
-
-  // const closeSuccessHandler = (reason) => {
-  //   if (reason === "clickaway") {
-  //     return;
-  //   }
-  //   setOpenSuccess(false);
-  // };
-
-  // const action = (
-  //   <React.Fragment>
-  //     <IconButton size="small" aria-label="close" color="inherit" onClick={closeHandler}>
-  //       <CloseIcon fontSize="small" />
-  //     </IconButton>
-  //   </React.Fragment>
-  // );
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -164,8 +77,11 @@ const dispatch = useDispatch()
 
   return (
     <>
+
+<ToastContainer />
+
       <Box className="container mt-5 d-flex justify-content-between">
-        <TextField onChange={[]} size="small" placeholder="Search" />
+        <TextField onChange={''} size="small" placeholder="Search" />
         <Autocomplete
           disablePortal
           size="small"
@@ -243,6 +159,7 @@ const dispatch = useDispatch()
           className="d-flex p-5  justify-content-center align-items-center"
         >
           {products?.map((product, index) => {
+            
             return (
               <Grid
                 item
@@ -310,7 +227,7 @@ const dispatch = useDispatch()
                       className="px-4 fw-bold text-white bg-black"
                     >
                       <Tooltip title="Add to cart" placement="top">
-                        <ShoppingCartIcon onClick={()=>dispatch(addToCart())} />
+                        <ShoppingCartIcon onClick={()=>dispatch(addProduct({product, toast}))} />
                       </Tooltip>
                     </Button>
                   </Box>
