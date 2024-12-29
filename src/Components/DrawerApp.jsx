@@ -129,7 +129,7 @@ const DrawerApp = (props) => {
 
           <Box className="d-flex justify-content-between align-items-center px-3 mt-3">
           <Typography className="fs-5 fw-bold">Subtotal:</Typography>
-          <Typography className="fs-5 fw-bold">$ {totalPrice}</Typography>
+          <Typography className="fs-5 fw-bold">${totalPrice}</Typography>
           </Box>
         </Box>
       </Drawer>

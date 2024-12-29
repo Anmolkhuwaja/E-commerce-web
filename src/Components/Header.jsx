@@ -64,8 +64,10 @@ export default function Header() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [cartItems ,setCartItems] = React.useState([]);
   const {items} = useSelector((state) => state.products);
-  
 
+  // const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
+  const totalQuantity = items.reduce((total, item) => total + item.quantity, 0);
+  
   console.log(cartItems?.length);
 
   const [open, setOpen] = React.useState(false);
@@ -139,7 +141,7 @@ export default function Header() {
     >
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={cartItems?.length} color="error">
+          <Badge badgeContent={totalQuantity} color="error">
             <ShoppingCartIcon onClick={toggleDrawer(true)} />
           </Badge>
         </IconButton>

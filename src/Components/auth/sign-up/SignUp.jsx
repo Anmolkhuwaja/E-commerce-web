@@ -12,39 +12,13 @@ import React, { useState } from "react";
 import SignUpImg from "../assets/signup.jpg";
 import Visibility from "@mui/icons-material/Visibility";
 // import OutlinedInput from '@mui/material/OutlinedInput';
-import { yupResolver } from "@hookform/resolvers/yup"
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useForm, Controller } from "react-hook-form";
-import * as yup from "yup"
+import useSignUp from "./SignUp";
 
 const SignUp = () => {
-  const [showPassword, setShowPassword] = useState(false);
 
-  const schema = yup.object({
-    name: yup.string().min(5).max(10).required("Your name is required"),
-    email: yup.string().required("Your email is required"),
-    password: yup.string().required("Your password is required").min(8, 'Password must be 8 characters long')
-    .matches(/[0-9]/, 'Password requires a number')
-    .matches(/[a-z]/, 'Password requires a lowercase letter')
-    .matches(/[A-Z]/, 'Password requires an uppercase letter')
-    .matches(/[^\w]/, 'Password requires a symbol'),
-  });
-
-  const signUpValues = {
-      name: "",
-      email: "",
-      password: "",
-  }
-
-  const { control, handleSubmit, reset, formState: { errors } } = useForm({
-    defaultValues: signUpValues,
-    resolver: yupResolver(schema)
-  });  
-
-  const signUpHandler = (dummy) =>{
-    console.log(dummy);
-    reset();
-  };
+  const {showPassword, setShowPassword, control, handleSubmit, errors , signUpHandler} = useSignUp();
 
   return (
     <>

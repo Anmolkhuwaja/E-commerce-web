@@ -4,32 +4,12 @@ import { Box, Button, Grid, IconButton, InputAdornment, OutlinedInput, TextField
 import { Controller, useForm } from 'react-hook-form';
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
-import { yupResolver } from "@hookform/resolvers/yup"
-import * as yup from "yup"
+
+import useSignIn from './useSignIn';
 
 const SignIn = () => {
-  const [showPassword, setShowPassword] = useState(false);
-
-  const schema = yup.object({
-    email: yup.string().required("Your email is required"),
-    password: yup.string().required("Your password is required")
-  });
-
-  const signInValues = {
-      email: "",
-      password: "",
-  }
-
-  const {control, handleSubmit, reset, formState: { errors }} = useForm({
-    defaultValues: signInValues,
-    resolver: yupResolver(schema)
-  });
-
-  const signInHandler = (e,dummy) =>{
-    e.preventDefault();
-    console.log(dummy);
-    reset();
-  };
+ 
+  const {showPassword, setShowPassword, control, handleSubmit, errors, signInHandler} = useSignIn();
 
   return (
     <div>
